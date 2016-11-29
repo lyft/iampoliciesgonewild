@@ -1,3 +1,4 @@
+import fnmatch
 import json
 import os
 import sys
@@ -69,8 +70,11 @@ def _expand_wildcard_action(action):
     """
     if isinstance(action, basestring):
         if '*' in action:
-            pre_wildcard = action.split('*')[0]
-            expanded = [expanded_action.lower() for expanded_action in all_permissions if expanded_action.startswith(pre_wildcard.lower())]
+            expanded = [
+                expanded_action.lower() for expanded_action in all_permissions if fnmatch.fnmatchcase(
+                    expanded_action.lower(), action.lower()
+                )
+            ]
 
             # if we get a wildcard for a tech we've never heard of, just return the wildcard
             if not expanded:
